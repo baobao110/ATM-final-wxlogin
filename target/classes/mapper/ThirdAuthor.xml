@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ 
+<mapper namespace="com.inter.ThirdDAO">
+
+	<resultMap type="com.thirdauthor.ThirdAuthor" id="thirdAuthorMap">
+		<id property="id" column="id"/>
+		<result property="userId" column="userId"/>
+		<result property="expiresIn" column="expiresIn"/>
+		<result property="acceccToken" column="acceccToken"/>
+		<result property="refreshToken" column="refreshToken"/>
+		<result property="openid" column="openid"/>
+		<result property="createTime" column="createTime"/>
+		<result property="modifyTime" column="modifyTime"/>
+	</resultMap>
+	
+	<sql id="author_filed">
+		 id,userId, expiresIn, acceccToken,refreshToken, openid,createTime,modifyTime
+	</sql>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+	insert ThirdAuthor(userId,expiresIn,acceccToken,refreshToken,openid,createTime,modifyTime) 
+	values(#{userId},#{expiresIn},#{acceccToken},#{refreshToken},#{openid},now(),now());
+	</insert>
+	
+	<select id="getAuthor" resultMap="thirdAuthorMap">
+		select <include refid="author_filed"></include> from ThirdAuthor where openid=#{openid};
+	</select>
+	
+	<update id="update">
+		update  ThirdAuthor set modifyTime = NOW(),acceccToken=#{acceccToken},refreshToken=#{refreshToken},expiresIn=#{expiresIn},userId=#{userId} where id=#{id};
+	</update>
+</mapper>

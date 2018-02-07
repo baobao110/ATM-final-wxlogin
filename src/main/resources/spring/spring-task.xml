@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+	<bean id="doOut" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="Out"/>
+	    <property name="targetMethod" value="work"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	
+	<bean id="doIn" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="In"/>
+	    <property name="targetMethod" value="work"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	
+	<bean id="transferIn" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" ref="doIn"/>
+	    <property name="cronExpression" value="0/2 * * * * ?"/>
+	</bean>
+	
+	<bean id="transferOut" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" ref="doOut"/>
+	    <property name="cronExpression" value="0/10 * * * * ?"/>
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+	        <list>
+	            <ref bean="transferOut"/>
+	            <ref bean="transferIn"/>
+	        </list>
+	    </property>
+	</bean>
+	
+</beans>
+
+<!-- 这里的问题之前 一直在配置中出现问题,这里在创建定时器时一个定时器对应一个类这里需要和Control做区分,这里区分二者的作用主要是因为在定时器是单独存在的-->
+<!-- 这里还有一个问题是别名的问题在spring中通过注解的方式在定时器类 -->

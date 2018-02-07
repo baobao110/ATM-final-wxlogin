@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:websocket="http://www.springframework.org/schema/websocket"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+    <websocket:handlers>
+        <websocket:mapping path="/Information" handler="socket"/>
+        <websocket:handshake-interceptors>
+            <bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+    
+    <!-- 注意这里的path和web。xml中一样 ,handler和socket的注解一样 -->
+    	
+    
+    <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+        <property name="maxTextMessageBufferSize" value="8192"/>
+        <property name="maxBinaryMessageBufferSize" value="8192"/>
+    </bean>
+
+</beans>
